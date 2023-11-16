@@ -20,6 +20,8 @@ Try Kalle's game [Boxtrix](https://market.android.com/details?id=boxtrix.android
  * Gamma corrected colors
  * Handler class to do all the work
  * Query method for testing is point inside of light/shadow
+ * Optional smooth lights, better looking, lower performance, drop in replacement [See them on youtube](https://www.youtube.com/watch?v=24XHJPjpxy4)
+
 
 This library offer easy way to add soft dynamic 2d lights to your physic based game. Rendering use libgdx but it would be easy to port this to other frameworks or pure openGl too.
 

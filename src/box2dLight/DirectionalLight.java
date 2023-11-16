@@ -153,7 +153,7 @@ public class DirectionalLight extends Light {
 			mx[i] = end[i].x = steppedX + xAxelOffSet;
 			my[i] = end[i].y = steppedY + yAxelOffSet;
 
-			if (rayHandler.world != null && !xray && !rayHandler.pseudo3d) {
+			if (rayHandler.world != null && !xray && !rayHandler.pseudo3d && !start[i].equals(end[i])) {
 				rayHandler.world.rayCast(ray, start[i], end[i]);
 			}
 		}
