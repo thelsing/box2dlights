@@ -3,6 +3,9 @@
 
 Kalle Hameleinen's Box2DLights is a 2D lighting framework that uses [box2d](http://box2d.org/) for raycasting and OpenGL ES 2.0 for rendering. This library is intended to be used with [libgdx](http://libgdx.com).
 
+Forked from [fgnm](https://github.com/fgnm/box2dlights) with changes from [hyperlap2d](https://github.com/rednblackgames/hyperlap2d-runtime-libgdx/tree/master/src/main/java/games/rednblack/editor/renderer/box2dLight)
+and [piotr-j/voodoosoft](https://github.com/voodoosoft/box2dlights) included.
+
 Try Kalle's game [Boxtrix](https://market.android.com/details?id=boxtrix.android) to see the library in action.
 
 ## Features
