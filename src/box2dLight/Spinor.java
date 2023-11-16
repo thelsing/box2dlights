@@ -27,7 +27,7 @@ public class Spinor {
 
   public Spinor set(float angle) {
     angle /= 2;
-    set(MathUtils.cos(angle), MathUtils.sin(angle));
+    set((float) Math.cos(angle), (float) Math.sin(angle));
     return this;
   }
 
@@ -60,11 +60,11 @@ public class Spinor {
     complex += other.complex;
     return this;
   }
-
+  
   public Spinor add(float angle) {
     angle /= 2;
-    real += MathUtils.cos(angle);
-    complex += MathUtils.sin(angle);
+    real += Math.cos(angle);
+    complex += Math.sin(angle);
     return this;
   }
 
@@ -73,11 +73,11 @@ public class Spinor {
     complex -= other.complex;
     return this;
   }
-
+  
   public Spinor sub(float angle) {
     angle /= 2;
-    real -= MathUtils.cos(angle);
-    complex -= MathUtils.sin(angle);
+    real -= Math.cos(angle);
+    complex -= Math.sin(angle);
     return this;
   }
 
@@ -91,7 +91,7 @@ public class Spinor {
 
   public Spinor mul(Spinor other) {
     set(real * other.real - complex * other.complex, real * other.complex
-            + complex * other.real);
+        + complex * other.real);
     return this;
   }
 
@@ -103,7 +103,7 @@ public class Spinor {
   }
 
   public float angle() {
-    return MathUtils.atan2(complex, real) * 2;
+    return (float) Math.atan2(complex, real) * 2;
   }
 
   public Spinor lerp(Spinor end, float alpha, Spinor tmp) {
@@ -132,10 +132,10 @@ public class Spinor {
 
     // coefficients
     if (1f - cosom > COSINE_THRESHOLD) {
-      omega = MathUtils.acos(cosom);
-      sinom = MathUtils.sin(omega);
-      scale0 = MathUtils.sin((1f - t) * omega) / sinom;
-      scale1 = MathUtils.sin(t * omega) / sinom;
+      omega = (float) Math.acos(cosom);
+      sinom = (float) Math.sin(omega);
+      scale0 = (float) Math.sin((1f - t) * omega) / sinom;
+      scale1 = (float) Math.sin(t * omega) / sinom;
     } else {
       scale0 = 1f - t;
       scale1 = t;
@@ -147,7 +147,7 @@ public class Spinor {
 
     return this;
   }
-
+  
   @Override public String toString() {
     StringBuilder result = new StringBuilder();
     float radians = angle();
@@ -158,4 +158,3 @@ public class Spinor {
     return result.toString();
   }
 }
-

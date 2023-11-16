@@ -1,35 +1,30 @@
 package box2dLight;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.utils.Pool;
 
-public class LightData implements Pool.Poolable {
+public class LightData {
 
 	public Object userData = null;
 
 	public float height;
 
-	public boolean roofShadow;
+	public boolean shadow;
 
 	int shadowsDropped = 0;
-
-	public LightData () {
-		this(0);
-	}
 
 	public LightData (float h) {
 		height = h;
 	}
 
-	public LightData (float h, boolean roofShadow) {
+	public LightData (float h, boolean shadow) {
 		height = h;
-		this.roofShadow = roofShadow;
+		this.shadow = shadow;
 	}
 
-	public LightData (Object data, float h, boolean roofShadow) {
+	public LightData (Object data, float h, boolean shadow) {
 		height = h;
 		userData = data;
-		this.roofShadow = roofShadow;
+		this.shadow = shadow;
 	}
 
 	public float getLimit (float distance, float lightHeight, float lightRange) {
@@ -58,13 +53,4 @@ public class LightData implements Pool.Poolable {
 		}
 	}
 
-	@Override
-	public void reset() {
-		userData = null;
-		height = 0;
-		roofShadow = false;
-		shadowsDropped = 0;
-	}
 }
-
-

@@ -21,9 +21,9 @@ import com.badlogic.gdx.physics.box2d.Shape.Type;
 
 /**
  * Light which source is at infinite distance
- *
+ * 
  * <p>Extends {@link Light}
- *
+ * 
  * @author kalle_h
  */
 public class DirectionalLight extends Light {
@@ -34,7 +34,7 @@ public class DirectionalLight extends Light {
 	protected final Vector2 end[];
 	protected float sin;
 	protected float cos;
-
+	
 	/** The body that could be set as ignored by this light type **/
 	protected Body body;
 
@@ -48,9 +48,9 @@ public class DirectionalLight extends Light {
 	/**
 	 * Creates directional light which source is at infinite distance,
 	 * direction and intensity is same everywhere
-	 *
+	 * 
 	 * <p>-90 direction is straight from up
-	 *
+	 * 
 	 * @param rayHandler
 	 *            not {@code null} instance of RayHandler
 	 * @param rays
@@ -62,10 +62,10 @@ public class DirectionalLight extends Light {
 	 *            direction in degrees
 	 */
 	public DirectionalLight(RayHandler rayHandler, int rays, Color color,
-							float directionDegree) {
-
+			float directionDegree) {
+		
 		super(rayHandler, rays, color, Float.POSITIVE_INFINITY, directionDegree);
-
+		
 		vertexNum = (vertexNum - 1) * 2;
 		start = new Vector2[rayNum];
 		end = new Vector2[rayNum];
@@ -74,11 +74,11 @@ public class DirectionalLight extends Light {
 			end[i] = new Vector2();
 		}
 
-		VertexDataType vertexDataType = VertexDataType.VertexArray;
+		Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
 		if (Gdx.gl30 != null) {
 			vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
 		}
-
+		
 		lightMesh = new Mesh(
 				vertexDataType, staticLight, vertexNum, 0,
 				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
@@ -89,7 +89,7 @@ public class DirectionalLight extends Light {
 				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 				new VertexAttribute(Usage.Generic, 1, "s"));
-
+		
 		update();
 	}
 
@@ -101,7 +101,7 @@ public class DirectionalLight extends Light {
 		cos = MathUtils.cosDeg(direction);
 		if (staticLight) dirty = true;
 	}
-
+	
 	@Override
 	void update() {
 		if (rayHandler.pseudo3d) {
@@ -132,7 +132,7 @@ public class DirectionalLight extends Light {
 			xAxelOffSet = 1;
 			yAxelOffSet = 1;
 		}
-
+		
 		final float widthOffSet = sizeOfScreen * -sin;
 		final float heightOffSet = sizeOfScreen * cos;
 
@@ -221,10 +221,10 @@ public class DirectionalLight extends Light {
 		//We never clear the affectedFixtures array except the lightsource moves.
 		//This prevents shadows from disappearing when fixture is out of sight but shadow should be still there
 		for (Fixture fixture : affectedFixtures) {
-			Object userData = fixture.getUserData();
-			if (!(userData instanceof LightData) || fixture.isSensor()) continue;
-
-			LightData data = (LightData) userData;
+			LightData data = (LightData) fixture.getUserData();
+			if (data == null) {
+				continue;
+			}
 
 			Shape fixtureShape = fixture.getShape();
 			Type type = fixtureShape.getType();
@@ -326,7 +326,7 @@ public class DirectionalLight extends Light {
 					segments[shadowSize++] = endColBits;
 					segments[shadowSize++] = f;
 				}
-				if (data.roofShadow) {
+				if (data.shadow) {
 					for (int n = 0; n < vertexCount; n++) {
 						tmpVec.set(tmpVerts.get(n));
 						segments[shadowSize++] = tmpVec.x;
@@ -402,12 +402,8 @@ public class DirectionalLight extends Light {
 
 			Mesh shadowMesh = null;
 			if (meshInd >= dynamicShadowMeshes.size) {
-				VertexDataType vertexDataType = VertexDataType.VertexArray;
-				if (Gdx.gl30 != null) {
-					vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
-				}
 				shadowMesh = new Mesh(
-						vertexDataType, false, RayHandler.MAX_SHADOW_VERTICES, 0,
+						VertexDataType.VertexArray, false, 128, 0,
 						new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 						new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 						new VertexAttribute(Usage.Generic, 1, "s"));
@@ -475,7 +471,7 @@ public class DirectionalLight extends Light {
 	@Override
 	public void attachToBody(Body body) {
 	}
-
+	
 	/** Not applicable for this light type **/
 	@Deprecated
 	@Override
@@ -517,13 +513,13 @@ public class DirectionalLight extends Light {
 	@Override
 	public void setDistance(float dist) {
 	}
-
+	
 	/** Not applicable for this light type **/
 	@Deprecated
 	@Override
 	public void setIgnoreAttachedBody(boolean flag) {
 	}
-
+	
 	/** Not applicable for this light type
 	 * <p>Always return {@code false}
 	 **/
