@@ -19,13 +19,13 @@ import com.badlogic.gdx.utils.Pools;
 /**
  * A light whose ray starting points are evenly distributed along a chain of
  * vertices
- * 
+ *
  * <p> Extends {@link Light}
- * 
+ *
  * @author spruce
  */
 public class ChainLight extends Light {
-	
+
 	public static float defaultRayStartOffset = 0.001f;
 	public float rayStartOffset;
 	public final FloatArray chain;
@@ -56,56 +56,45 @@ public class ChainLight extends Light {
 
 	protected final Rectangle chainLightBounds = new Rectangle();
 	protected final Rectangle rayHandlerBounds = new Rectangle();
-	
+
 	/**
 	 * Creates chain light without vertices, they can be added any time later
-	 * 
-	 * @param rayHandler
-	 *            not {@code null} instance of RayHandler
-	 * @param rays
-	 *            number of rays - more rays make light to look more realistic
-	 *            but will decrease performance, can't be less than MIN_RAYS
-	 * @param color
-	 *            color, set to {@code null} to use the default color
-	 * @param distance
-	 *            distance of light, soft shadow length is set to distance * 0.1f
-	 * @param rayDirection
-	 *            direction of rays
-	 *            <ul>
-	 *            <li>1 = left</li>
-	 *            <li>-1 = right</li>
- 	 *            </ul>
- 	 */
+	 *
+	 * @param rayHandler   not {@code null} instance of RayHandler
+	 * @param rays         number of rays - more rays make light to look more realistic
+	 *                     but will decrease performance, can't be less than MIN_RAYS
+	 * @param color        color, set to {@code null} to use the default color
+	 * @param distance     distance of light, soft shadow length is set to distance * 0.1f
+	 * @param rayDirection direction of rays
+	 *                     <ul>
+	 *                     <li>1 = left</li>
+	 *                     <li>-1 = right</li>
+	 *                     </ul>
+	 */
 	public ChainLight(RayHandler rayHandler, int rays, Color color,
-			float distance, int rayDirection) {
+					  float distance, int rayDirection) {
 		this(rayHandler, rays, color, distance, rayDirection, null);
 	}
 
 	/**
 	 * Creates chain light from specified vertices
-	 * 
-	 * @param rayHandler
-	 *            not {@code null} instance of RayHandler
-	 * @param rays
-	 *            number of rays - more rays make light to look more realistic
-	 *            but will decrease performance, can't be less than MIN_RAYS
-	 * @param color
-	 *            color, set to {@code null} to use the default color
-	 * @param distance
-	 *            distance of light
-	 * @param rayDirection
-	 *            direction of rays
-	 *            <ul>
-	 *            <li>1 = left</li>
-	 *            <li>-1 = right</li>
-	 *            </ul>
-	 * @param chain
-	 *            float array of (x, y) vertices from which rays will be
-	 *            evenly distributed
+	 *
+	 * @param rayHandler   not {@code null} instance of RayHandler
+	 * @param rays         number of rays - more rays make light to look more realistic
+	 *                     but will decrease performance, can't be less than MIN_RAYS
+	 * @param color        color, set to {@code null} to use the default color
+	 * @param distance     distance of light
+	 * @param rayDirection direction of rays
+	 *                     <ul>
+	 *                     <li>1 = left</li>
+	 *                     <li>-1 = right</li>
+	 *                     </ul>
+	 * @param chain        float array of (x, y) vertices from which rays will be
+	 *                     evenly distributed
 	 */
 	public ChainLight(RayHandler rayHandler, int rays, Color color,
-			float distance, int rayDirection, float[] chain) {
-		
+					  float distance, int rayDirection, float[] chain) {
+
 		super(rayHandler, rays, color, distance, 0f);
 		rayStartOffset = ChainLight.defaultRayStartOffset;
 		this.rayDirection = rayDirection;
@@ -115,9 +104,9 @@ public class ChainLight extends Light {
 		startX = new float[rays];
 		startY = new float[rays];
 		this.chain = (chain != null) ?
-					 new FloatArray(chain) : new FloatArray();
+				new FloatArray(chain) : new FloatArray();
 
-		Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
+		VertexDataType vertexDataType = VertexDataType.VertexArray;
 		if (Gdx.gl30 != null) {
 			vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
 		}
@@ -134,7 +123,7 @@ public class ChainLight extends Light {
 				new VertexAttribute(Usage.Generic, 1, "s"));
 		setMesh();
 	}
-	
+
 	@Override
 	public void update() {
 		if (dirty) {
@@ -143,28 +132,28 @@ public class ChainLight extends Light {
 		} else {
 			updateBody();
 		}
-		
+
 		if (cull()) return;
 		if (staticLight && !dirty) return;
 		dirty = false;
-		
+
 		updateMesh();
 	}
-	
+
 	@Override
 	public void render() {
 		if (rayHandler.culling && culled) return;
-		
+
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
-			rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
-		
+				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+
 		if (soft && !xray) {
 			softShadowMesh.render(
-				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+					rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
 		}
 	}
-	
+
 	/**
 	 * Draws a polygon, using ray start and end points as vertices
 	 */
@@ -181,21 +170,19 @@ public class ChainLight extends Light {
 		shapeRenderer.polygon(vertices.shrink());
 		Pools.free(vertices);
 	}
-	
+
 	@Override
 	public void attachToBody(Body body) {
 		attachToBody(body, 0f);
 	}
-	
+
 	/**
 	 * Attaches light to specified body with relative direction offset
-	 * 
-	 * @param body
-	 *            that will be automatically followed, note that the body
-	 *            rotation angle is taken into account for the light offset
-	 *            and direction calculations
-	 * @param degrees
-	 *            directional relative offset in degrees 
+	 *
+	 * @param body    that will be automatically followed, note that the body
+	 *                rotation angle is taken into account for the light offset
+	 *                and direction calculations
+	 * @param degrees directional relative offset in degrees
 	 */
 	public void attachToBody(Body body, float degrees) {
 		this.body = body;
@@ -205,36 +192,36 @@ public class ChainLight extends Light {
 		applyAttachment();
 		if (staticLight) dirty = true;
 	}
-	
+
 	@Override
 	public Body getBody() {
 		return body;
 	}
-	
+
 	@Override
 	public float getX() {
 		return tmpPosition.x;
 	}
-	
+
 	@Override
 	public float getY() {
 		return tmpPosition.y;
 	}
-	
+
 	@Override
 	public void setPosition(float x, float y) {
 		tmpPosition.x = x;
 		tmpPosition.y = y;
 		if (staticLight) dirty = true;
 	}
-	
+
 	@Override
 	public void setPosition(Vector2 position) {
 		tmpPosition.x = position.x;
 		tmpPosition.y = position.y;
 		if (staticLight) dirty = true;
 	}
-	
+
 	@Override
 	public boolean contains(float x, float y) {
 		// fast fail
@@ -243,14 +230,14 @@ public class ChainLight extends Light {
 		// actual check
 		FloatArray vertices = Pools.obtain(FloatArray.class);
 		vertices.clear();
-		
+
 		for (int i = 0; i < rayNum; i++) {
 			vertices.addAll(mx[i], my[i]);
 		}
 		for (int i = rayNum - 1; i > -1; i--) {
 			vertices.addAll(startX[i], startY[i]);
 		}
-		
+
 		int intersects = 0;
 		for (int i = 0; i < vertices.size; i += 2) {
 			float x1 = vertices.items[i];
@@ -266,10 +253,10 @@ public class ChainLight extends Light {
 		Pools.free(vertices);
 		return result;
 	}
-	
+
 	/**
 	 * Sets light distance
-	 * 
+	 *
 	 * <p>MIN value capped to 0.1f meter
 	 * <p>Actual recalculations will be done only on {@link #update()} call
 	 */
@@ -279,13 +266,15 @@ public class ChainLight extends Light {
 		this.distance = dist < 0.01f ? 0.01f : dist;
 		dirty = true;
 	}
-	
-	/** Not applicable for this light type **/
+
+	/**
+	 * Not applicable for this light type
+	 **/
 	@Deprecated
 	@Override
 	public void setDirection(float directionDegree) {
 	}
-	
+
 	/**
 	 * Calculates ray positions and angles along chain. This should be called
 	 * any time the number or values of elements changes in {@link #chain}.
@@ -306,63 +295,63 @@ public class ChainLight extends Light {
 		Spinor startAngle = Pools.obtain(Spinor.class);
 		Spinor endAngle = Pools.obtain(Spinor.class);
 		Spinor rayAngle = Pools.obtain(Spinor.class);
-		
+
 		int segmentCount = chain.size / 2 - 1;
-		
+
 		segmentAngles.clear();
 		segmentLengths.clear();
 		float remainingLength = 0;
-		
+
 		for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
 			v1.set(chain.items[i + 2], chain.items[i + 3])
-				.sub(chain.items[i], chain.items[i + 1]);
+					.sub(chain.items[i], chain.items[i + 1]);
 			segmentLengths.add(v1.len());
 			segmentAngles.add(
-				v1.rotate90(rayDirection).angle() * MathUtils.degreesToRadians
+					v1.rotate90(rayDirection).angleRad()
 			);
 			remainingLength += segmentLengths.items[j];
 		}
-		
+
 		int rayNumber = 0;
 		int remainingRays = rayNum;
-		
+
 		for (int i = 0; i < segmentCount; i++) {
 			// get this and adjacent segment angles
 			previousAngle.set(
-				(i == 0) ?
-				segmentAngles.items[i] : segmentAngles.items[i - 1]);
+					(i == 0) ?
+							segmentAngles.items[i] : segmentAngles.items[i - 1]);
 			currentAngle.set(segmentAngles.items[i]);
 			nextAngle.set(
-				(i == segmentAngles.size - 1) ?
-				segmentAngles.items[i] : segmentAngles.items[i + 1]);
-			
+					(i == segmentAngles.size - 1) ?
+							segmentAngles.items[i] : segmentAngles.items[i + 1]);
+
 			// interpolate to find actual start and end angles
 			startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
 			endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
 
 			int segmentVertex = i * 2;
 			vSegmentStart.set(
-				chain.items[segmentVertex], chain.items[segmentVertex + 1]);
+					chain.items[segmentVertex], chain.items[segmentVertex + 1]);
 			vDirection.set(
-				chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
+					chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
 			).sub(vSegmentStart).nor();
 
 			float raySpacing = remainingLength / remainingRays;
 			int segmentRays = (i == segmentCount - 1) ?
-				remainingRays :
-				(int) ((segmentLengths.items[i] / remainingLength) *
-						remainingRays);
-			
+					remainingRays :
+					(int) ((segmentLengths.items[i] / remainingLength) *
+							remainingRays);
+
 			for (int j = 0; j < segmentRays; j++) {
 				float position = j * raySpacing;
 
 				// interpolate ray angle based on position within segment
 				rayAngle.set(startAngle).slerp(
-					endAngle, position / segmentLengths.items[i]);
+						endAngle, position / segmentLengths.items[i]);
 				float angle = rayAngle.angle();
 				vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
 				v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
-				
+
 				this.startX[rayNumber] = v1.x;
 				this.startY[rayNumber] = v1.y;
 				v2.set(distance, 0).rotateRad(angle).add(v1);
@@ -370,12 +359,12 @@ public class ChainLight extends Light {
 				this.endY[rayNumber] = v2.y;
 				rayNumber++;
 			}
-			
+
 			remainingRays -= segmentRays;
 			remainingLength -= segmentLengths.items[i];
-			
+
 		}
-		
+
 		Pools.free(v1);
 		Pools.free(v2);
 		Pools.free(vSegmentStart);
@@ -389,13 +378,13 @@ public class ChainLight extends Light {
 		Pools.free(rayAngle);
 		Pools.free(tmpAngle);
 	}
-	
+
 	/**
 	 * Applies attached body initial transform to all lights rays
 	 */
 	void applyAttachment() {
 		if (body == null || staticLight) return;
-		
+
 		restorePosition.setToTranslation(bodyPosition);
 		rotateAroundZero.setToRotationRad(bodyAngle + bodyAngleOffset);
 		for (int i = 0; i < rayNum; i++) {
@@ -407,22 +396,22 @@ public class ChainLight extends Light {
 			endY[i] = tmpVec.y;
 		}
 	}
-	
+
 	protected boolean cull() {
 		if (!rayHandler.culling) {
 			culled = false;
 		} else {
 			updateBoundingRects();
 			culled = chainLightBounds.width > 0 &&
-					 chainLightBounds.height > 0 &&
-					 !chainLightBounds.overlaps(rayHandlerBounds);
+					chainLightBounds.height > 0 &&
+					!chainLightBounds.overlaps(rayHandlerBounds);
 		}
 		return culled;
 	}
-	
+
 	void updateBody() {
 		if (body == null || staticLight) return;
-	
+
 		final Vector2 vec = body.getPosition();
 		tmpVec.set(0, 0).sub(bodyPosition);
 		bodyPosition.set(vec);
@@ -430,20 +419,20 @@ public class ChainLight extends Light {
 		restorePosition.setToTranslation(bodyPosition);
 		rotateAroundZero.setToRotationRad(bodyAngle).inv().rotateRad(body.getAngle());
 		bodyAngle = body.getAngle();
-		
+
 		for (int i = 0; i < rayNum; i++) {
 			tmpVec.set(startX[i], startY[i]).mul(zeroPosition).mul(rotateAroundZero)
-				.mul(restorePosition);
+					.mul(restorePosition);
 			startX[i] = tmpVec.x;
 			startY[i] = tmpVec.y;
 
 			tmpVec.set(endX[i], endY[i]).mul(zeroPosition).mul(rotateAroundZero)
-				.mul(restorePosition);
+					.mul(restorePosition);
 			endX[i] = tmpVec.x;
 			endY[i] = tmpVec.y;
 		}
 	}
-	
+
 	protected void updateMesh() {
 		for (int i = 0; i < rayNum; i++) {
 			m_index = i;
@@ -460,7 +449,7 @@ public class ChainLight extends Light {
 		}
 		setMesh();
 	}
-	
+
 	protected void setMesh() {
 		int size = 0;
 		for (int i = 0; i < rayNum; i++) {
@@ -484,7 +473,7 @@ public class ChainLight extends Light {
 			final float s = (1 - f[i]);
 			segments[size++] = s;
 			tmpPerp.set(mx[i], my[i]).sub(startX[i], startY[i]).nor()
-				.scl(softShadowLength * s).add(mx[i], my[i]);
+					.scl(softShadowLength * s).add(mx[i], my[i]);
 			segments[size++] = tmpPerp.x;
 			segments[size++] = tmpPerp.y;
 			segments[size++] = zeroColorBits;
@@ -492,8 +481,10 @@ public class ChainLight extends Light {
 		}
 		softShadowMesh.setVertices(segments, 0, size);
 	}
-	
-	/** Internal method for bounding rectangle recalculation **/
+
+	/**
+	 * Internal method for bounding rectangle recalculation
+	 **/
 	protected void updateBoundingRects() {
 		float maxX = startX[0];
 		float minX = startX[0];
@@ -512,8 +503,8 @@ public class ChainLight extends Light {
 		}
 		chainLightBounds.set(minX, minY, maxX - minX, maxY - minY);
 		rayHandlerBounds.set(
-			rayHandler.x1, rayHandler.y1,
-			rayHandler.x2 - rayHandler.x1, rayHandler.y2 - rayHandler.y1);
+				rayHandler.x1, rayHandler.y1,
+				rayHandler.x2 - rayHandler.x1, rayHandler.y2 - rayHandler.y1);
 	}
-	
+
 }

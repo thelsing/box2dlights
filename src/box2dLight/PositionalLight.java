@@ -12,9 +12,9 @@ import com.badlogic.gdx.physics.box2d.*;
 
 /**
  * Abstract base class for all positional lights
- * 
+ *
  * <p>Extends {@link Light}
- * 
+ *
  * @author kalle_h
  */
 public abstract class PositionalLight extends Light {
@@ -23,22 +23,22 @@ public abstract class PositionalLight extends Light {
 
 	protected final Vector2 tmpEnd = new Vector2();
 	protected final Vector2 start = new Vector2();
-	
+
 	protected Body body;
 	protected float bodyOffsetX;
 	protected float bodyOffsetY;
 	protected float bodyAngleOffset;
-	
+
 	protected float sin[];
 	protected float cos[];
 
 	protected float endX[];
 	protected float endY[];
-	
-	/** 
+
+	/**
 	 * Creates new positional light and automatically adds it to the specified
 	 * {@link RayHandler} instance.
-	 * 
+	 *
 	 * @param rayHandler
 	 *            not null instance of RayHandler
 	 * @param rays
@@ -60,30 +60,31 @@ public abstract class PositionalLight extends Light {
 		start.x = x;
 		start.y = y;
 
-		Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
+		VertexDataType vertexDataType = VertexDataType.VertexArray;
 		if (Gdx.gl30 != null) {
 			vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
 		}
-		lightMesh = new Mesh(vertexDataType, false, vertexNum, 0, new VertexAttribute(Usage.Position, 2,
-			"vertex_positions"), new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
-			new VertexAttribute(Usage.Generic, 1, "s"));
+		lightMesh = new Mesh(vertexDataType, false, vertexNum, 0,
+				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
+				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+				new VertexAttribute(Usage.Generic, 1, "s"));
 		softShadowMesh = new Mesh(vertexDataType, false, vertexNum * 2, 0, new VertexAttribute(Usage.Position, 2,
-			"vertex_positions"), new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
-			new VertexAttribute(Usage.Generic, 1, "s"));
+				"vertex_positions"), new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+				new VertexAttribute(Usage.Generic, 1, "s"));
 		setMesh();
 	}
-	
+
 	@Override
 	void update() {
 		updateBody();
-		
+
 		if (cull()) return;
 		if (staticLight && !dirty) return;
-		
+
 		dirty = false;
 		updateMesh();
 	}
-	
+
 	@Override
 	void render() {
 		if (rayHandler.culling && culled) return;
@@ -93,21 +94,21 @@ public abstract class PositionalLight extends Light {
 
 		if (soft && !xray && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
-				rayHandler.lightShader,
-				GL20.GL_TRIANGLE_STRIP,
-				0,
-				(vertexNum - 1) * 2);
+					rayHandler.lightShader,
+					GL20.GL_TRIANGLE_STRIP,
+					0,
+					(vertexNum - 1) * 2);
 		}
 	}
-	
+
 	@Override
 	public void attachToBody(Body body) {
 		attachToBody(body, 0f, 0f, 0f);
 	}
-	
+
 	/**
 	 * Attaches light to specified body with relative offset
-	 * 
+	 *
 	 * @param body
 	 *            that will be automatically followed, note that the body
 	 *            rotation angle is taken into account for the light offset
@@ -116,15 +117,15 @@ public abstract class PositionalLight extends Light {
 	 *            horizontal relative offset in world coordinates
 	 * @param offsetY
 	 *            vertical relative offset in world coordinates
-	 * 
+	 *
 	 */
 	public void attachToBody(Body body, float offsetX, float offsetY) {
 		attachToBody(body, offsetX, offsetY, 0f);
 	}
-	
+
 	/**
 	 * Attaches light to specified body with relative offset and direction
-	 * 
+	 *
 	 * @param body
 	 *            that will be automatically followed, note that the body
 	 *            rotation angle is taken into account for the light offset
@@ -134,7 +135,7 @@ public abstract class PositionalLight extends Light {
 	 * @param offsetY
 	 *            vertical relative offset in world coordinates
 	 * @param degrees
-	 *            directional relative offset in degrees 
+	 *            directional relative offset in degrees
 	 */
 	public void attachToBody(Body body, float offsetX, float offsetY, float degrees) {
 		this.body = body;
@@ -207,26 +208,26 @@ public abstract class PositionalLight extends Light {
 		}
 		return oddNodes;
 	}
-	
+
 	@Override
 	protected void setRayNum(int rays) {
 		super.setRayNum(rays);
-		
+
 		sin = new float[rays];
 		cos = new float[rays];
 		endX = new float[rays];
 		endY = new float[rays];
 	}
-	
+
 	protected boolean cull() {
 		culled = rayHandler.culling && !rayHandler.intersect(
-					start.x, start.y, distance + softShadowLength);
+				start.x, start.y, distance + softShadowLength);
 		return culled;
 	}
-	
+
 	protected void updateBody() {
 		if (body == null || staticLight) return;
-		
+
 		final Vector2 vec = body.getPosition();
 		float angle = body.getAngle();
 		final float cos = MathUtils.cos(angle);
@@ -237,7 +238,7 @@ public abstract class PositionalLight extends Light {
 		start.y = vec.y + dY;
 		setDirection(bodyAngleOffset + angle * MathUtils.radiansToDegrees);
 	}
-	
+
 	protected void updateMesh() {
 		for (int i = 0; i < rayNum; i++) {
 			m_index = i;
@@ -299,8 +300,10 @@ public abstract class PositionalLight extends Light {
 		int meshInd = 0;
 		float colBits = rayHandler.ambientLight.toFloatBits();
 		for (Fixture fixture : affectedFixtures) {
-			LightData data = (LightData)fixture.getUserData();
-			if (data == null || fixture.isSensor()) continue;
+			Object userData = fixture.getUserData();
+			if (!(userData instanceof LightData) || fixture.isSensor()) continue;
+
+			LightData data = (LightData) userData;
 
 			int size = 0;
 			float l;
@@ -414,6 +417,38 @@ public abstract class PositionalLight extends Light {
 					segments[size++] = endColBits;
 					segments[size++] = f2;
 				}
+				if (data.roofShadow || pseudo3dHeight <= data.height) {
+					for (int n = 0; n < vertexCount; n++) {
+						tmpVec.set(tmpVerts.get(n));
+
+						float dst = tmpVec.dst(start);
+						float f1 = 1f - dst / distance;
+
+						tmpColor.set(Color.BLACK);
+						float startColBits = rayHandler.shadowColorInterpolation
+								? tmpColor.lerp(rayHandler.ambientLight, f1).toFloatBits()
+								: oneColorBits;
+
+						segments[size++] = tmpVec.x;
+						segments[size++] = tmpVec.y;
+						segments[size++] = startColBits;
+						segments[size++] = f1;
+						if (n == vertexCount - 1) {
+							tmpVec.set(tmpVerts.get(0));
+							dst = tmpVec.dst(start);
+							f1 = 1f - dst / distance;
+							tmpColor.set(Color.BLACK);
+							startColBits = rayHandler.shadowColorInterpolation
+									? tmpColor.lerp(rayHandler.ambientLight, f1).toFloatBits()
+									: oneColorBits;
+
+							segments[size++] = tmpVec.x;
+							segments[size++] = tmpVec.y;
+							segments[size++] = startColBits;
+							segments[size++] = f1;
+						}
+					}
+				}
 			} else if (type == Shape.Type.Circle) {
 				CircleShape shape = (CircleShape)fixtureShape;
 				float r = shape.getRadius();
@@ -520,11 +555,15 @@ public abstract class PositionalLight extends Light {
 
 			Mesh mesh = null;
 			if (meshInd >= dynamicShadowMeshes.size) {
+				VertexDataType vertexDataType = VertexDataType.VertexArray;
+				if (Gdx.gl30 != null) {
+					vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
+				}
 				mesh = new Mesh(
-						Mesh.VertexDataType.VertexArray, false, RayHandler.MAX_SHADOW_VERTICES, 0,
-						new VertexAttribute(VertexAttributes.Usage.Position, 2, "vertex_positions"),
-						new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "quad_colors"),
-						new VertexAttribute(VertexAttributes.Usage.Generic, 1, "s"));
+						vertexDataType, false, RayHandler.MAX_SHADOW_VERTICES, 0,
+						new VertexAttribute(Usage.Position, 2, "vertex_positions"),
+						new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+						new VertexAttribute(Usage.Generic, 1, "s"));
 				dynamicShadowMeshes.add(mesh);
 			} else {
 				mesh = dynamicShadowMeshes.get(meshInd);
@@ -559,3 +598,4 @@ public abstract class PositionalLight extends Light {
 		this.bodyAngleOffset = bodyAngleOffset;
 	}
 }
+
