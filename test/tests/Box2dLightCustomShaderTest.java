@@ -5,6 +5,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -23,7 +25,18 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.ArrayList;
 
 public class Box2dLightCustomShaderTest extends InputAdapter implements ApplicationListener {
-	
+	public static void main(String[] argv) {
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "box2d lights test";
+		config.width = 1200;
+		config.height = 800;
+		config.samples = 4;
+		config.depth = 0;
+		config.vSyncEnabled = true;
+
+		config.fullscreen = false;
+		new LwjglApplication(new Box2dLightCustomShaderTest(), config);
+	}
 	static final int RAYS_PER_BALL = 64;
 	static final int BALLSNUM = 8;
 	static final float LIGHT_DISTANCE = 16f;
@@ -80,8 +93,8 @@ public class Box2dLightCustomShaderTest extends InputAdapter implements Applicat
 
 	@Override
 	public void create() {
-		bg = new Texture(Gdx.files.internal("data/bg-deferred.png"));
-		bgN = new Texture(Gdx.files.internal("data/bg-deferred-n.png"));
+		bg = new Texture(Gdx.files.internal("test/data/bg-deferred.png"));
+		bgN = new Texture(Gdx.files.internal("test/data/bg-deferred-n.png"));
 
 		MathUtils.random.setSeed(Long.MIN_VALUE);
 
@@ -95,10 +108,10 @@ public class Box2dLightCustomShaderTest extends InputAdapter implements Applicat
 		font.setColor(Color.RED);
 
 		TextureRegion marbleD = new TextureRegion(new Texture(
-			Gdx.files.internal("data/marble.png")));
+			Gdx.files.internal("test/data/marble.png")));
 
 		TextureRegion marbleN = new TextureRegion(new Texture(
-			Gdx.files.internal("data/marble-n.png")));
+			Gdx.files.internal("test/data/marble-n.png")));
 
 		marble = new DeferredObject(marbleD, marbleN);
 		marble.width = RADIUS * 2;
@@ -135,8 +148,8 @@ public class Box2dLightCustomShaderTest extends InputAdapter implements Applicat
 		/** BOX2D LIGHT STUFF END */
 
 
-		objectReg = new TextureRegion(new Texture(Gdx.files.internal("data/object-deferred.png")));
-		objectRegN = new TextureRegion(new Texture(Gdx.files.internal("data/object-deferred-n.png")));
+		objectReg = new TextureRegion(new Texture(Gdx.files.internal("test/data/object-deferred.png")));
+		objectRegN = new TextureRegion(new Texture(Gdx.files.internal("test/data/object-deferred-n.png")));
 
 		for (int x = 0; x < 4; x++) {
 			for (int y = 0; y < 3; y++) {

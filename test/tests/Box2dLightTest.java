@@ -8,6 +8,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -32,7 +34,18 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 public class Box2dLightTest extends InputAdapter implements ApplicationListener {
-	
+	public static void main(String[] argv) {
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "box2d lights test";
+		config.width = 1200;
+		config.height = 800;
+		config.samples = 4;
+		config.depth = 0;
+		config.vSyncEnabled = true;
+
+		config.fullscreen = false;
+		new LwjglApplication(new Box2dLightTest(), config);
+	}
 	static final int RAYS_PER_BALL = 128;
 	static final int BALLSNUM = 5;
 	static final float LIGHT_DISTANCE = 16f;

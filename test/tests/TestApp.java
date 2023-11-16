@@ -217,7 +217,7 @@ public class TestApp extends ApplicationAdapter implements InputProcessor {
 			// lights are clipped by viewport, so this is not required
 			Gdx.gl.glScissor(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 			rayHandler.setCombinedMatrix(camera);
-			rayHandler.useCustomViewport(viewport, viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
+			rayHandler.useCustomViewport(/*viewport, */viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
 			rayHandler.updateAndRender();
 
 			renderer.setProjectionMatrix(camera.combined);
