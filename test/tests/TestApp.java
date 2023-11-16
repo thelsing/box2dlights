@@ -455,7 +455,7 @@ public class TestApp extends ApplicationAdapter implements InputProcessor {
 			lastTp.set(tp);
 		}
 
-		public void scrolled (int amount) {
+		public void scrolled (float amount) {
 			if (!over) return;
 			viewport.unproject(lastTp.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			camera.zoom = MathUtils.clamp(camera.zoom + camera.zoom * .1f * amount, .1f, 3f);
@@ -546,6 +546,11 @@ public class TestApp extends ApplicationAdapter implements InputProcessor {
 		return false;
 	}
 
+	@Override
+	public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
 	@Override public boolean touchDragged (int screenX, int screenY, int pointer) {
 		smooth.touchDragged(screenX, screenY);
 		normal.touchDragged(screenX, screenY);
@@ -558,9 +563,10 @@ public class TestApp extends ApplicationAdapter implements InputProcessor {
 		return false;
 	}
 
-	@Override public boolean scrolled (int amount) {
-		smooth.scrolled(amount);
-		normal.scrolled(amount);
+	@Override
+	public boolean scrolled(float amountX, float amountY) {
+		smooth.scrolled(amountY);
+		normal.scrolled(amountY);
 		return false;
 	}
 

@@ -8,14 +8,14 @@ public class DesktopLauncher {
 	public static void main(String[] argv) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "box2d lights test";
-		config.width = 800;
-		config.height = 480;
+		config.width = 1200;
+		config.height = 800;
 		config.samples = 4;
 		config.depth = 0;
 		config.vSyncEnabled = true;
 
 		config.fullscreen = false;
-		new LwjglApplication(new Box2dLightTest2(), config);
+		new LwjglApplication(new Box2dLightTest(), config);
 	}
 
 }

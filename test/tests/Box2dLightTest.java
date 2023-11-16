@@ -89,8 +89,8 @@ public class Box2dLightTest extends InputAdapter implements ApplicationListener 
 		font.setColor(Color.RED);
 		
 		textureRegion = new TextureRegion(new Texture(
-				Gdx.files.internal("data/marble.png")));
-		bg = new Texture(Gdx.files.internal("data/bg.png"));
+				Gdx.files.internal("test/data/marble.png")));
+		bg = new Texture(Gdx.files.internal("test/data/bg.png"));
 
 		createPhysicsWorld();
 		Gdx.input.setInputProcessor(this);
@@ -516,8 +516,8 @@ public class Box2dLightTest extends InputAdapter implements ApplicationListener 
 	}
 
 	@Override
-	public boolean scrolled(int amount) {
-		camera.rotate((float) amount * 3f, 0, 0, 1);
+	public boolean scrolled(float amountX, float amountY) {
+		camera.rotate((float) amountX * 3f, 0, 0, 1);
 		return false;
 	}
 
